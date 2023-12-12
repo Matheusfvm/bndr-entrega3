@@ -27,8 +27,8 @@ while key != 'S':
     if usuarioLogado == None:
         print("\n1 - Entrar")
         print("2 - Cadastrar usuário")
-        print("3 - Comprar Produto")
-        print("4 - Favoritar Produto")
+        print("3 - Menu de Compra")
+        print("4 - Menu de Favorito")
         key = input("\nDigite a opção desejada?(S para sair) ").upper()
 
         if key == '1':
@@ -66,7 +66,7 @@ while key != 'S':
             print("\n-----------------")
             print("\nMenu de favorito\n")
             print("1 - Favoritar um Produto")
-            print("2 -Desfavoritar um Produto")
+            print("2 - Desfavoritar um Produto")
             print("3 - Listar Favoritos")        
             sub = input("\nDigite a opção desejada? (V para voltar) ")
 
@@ -99,8 +99,8 @@ while key != 'S':
             break
     else:
         print("\n1 - Encerrar sessão")
-        print("2 - Comprar Produto")
-        print("3 - Favoritar Produto")
+        print("2 - Menu de Compra")
+        print("3 - Menu de Favorito")
         key = input("\nDigite a opção desejada?(S para sair) ").upper()
 
         if key == '1':
@@ -126,7 +126,7 @@ while key != 'S':
                 print("\n----LISTAR COMPRAS----\n")
                 tempoSessao = usuario.consultarTempoUsuario(conexaoRedis, usuarioLogado['email'])
                 if tempoSessao == True:
-                    compra.criarCompra(usuarioLogado) 
+                    compra.listarCompras(usuarioLogado) 
                 else:
                     usuarioLogado = None
 
@@ -134,7 +134,7 @@ while key != 'S':
             print("\n-----------------")
             print("\nMenu de favorito\n")
             print("1 - Favoritar um Produto")
-            print("2 -Desfavoritar um Produto")
+            print("2 - Desfavoritar um Produto")
             print("3 - Listar Favoritos")        
             sub = input("\nDigite a opção desejada? (V para voltar) ")
 

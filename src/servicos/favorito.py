@@ -25,19 +25,20 @@ def criarFavorito(usuarioEscolhidoMongo, conexaoRedis, conexaoMongo):
             }
             objetoUsuarioRedis['listaFavorito'].append(produtoObjeto)
             jsonUsuarioRedis = json.dumps(objetoUsuarioRedis)
+            colecaoUsuario.update_one(usuarioEscolhidoMongo, atualizacao)
             tempoDeVida = conexaoRedis.ttl(f"usuario-{usuarioEscolhidoMongo['email']}")
             conexaoRedis.set(f"usuario-{usuarioEscolhidoMongo['email']}", jsonUsuarioRedis)
             conexaoRedis.expire(f"usuario-{usuarioEscolhidoMongo['email']}", tempoDeVida)
-            colecaoUsuario.update_one(usuarioEscolhidoMongo, atualizacao)
             print(f'\nO produto {produtoEscolhido["descricao"]} está entre seus favoritos!\n')
 
 def listarFavorito(usuarioEscolhidoMongo, conexaoRedis):
     usuarioEscolhidoRedis = conexaoRedis.get(f"usuario-{usuarioEscolhidoMongo['email']}")
     if usuarioEscolhidoRedis != None:
+        objetoUsuarioRedis = json.loads(usuarioEscolhidoRedis)
         print("\nProdutos")
-        for favorito in usuarioEscolhidoMongo["lista_favorito"]:
-            print(f"Descrição: {favorito["descricao"]}")
-            print(f"Preço: R${favorito["preco"]}")
+        for favorito in objetoUsuarioRedis['listaFavorito']:
+            print(f"Descrição: {favorito['descricao']}")
+            print(f"Preço: R${favorito['preco']}")
             print("\n---------------------------------------\n")
 
 def deletarFavorito(usuarioEscolhidoMongo, conexaoRedis, conexaoMongo): 
@@ -57,10 +58,15 @@ def deletarFavorito(usuarioEscolhidoMongo, conexaoRedis, conexaoMongo):
                 "lista_favorito": produtoObjeto
             }
         }
-        objetoUsuarioRedis['listaFavorito'].append(produtoObjeto)
-        jsonUsuarioRedis = json.dumps(objetoUsuarioRedis)
-        colecaoUsuario.update_one(usuarioEscolhidoMongo, atualizacaoListaFavorito)
-        tempoDeVida = conexaoRedis.ttl(f"usuario-{usuarioEscolhidoMongo['email']}")
-        conexaoRedis.set(f"usuario-{usuarioEscolhidoMongo['email']}", jsonUsuarioRedis)
-        conexaoRedis.expire(f"usuario-{usuarioEscolhidoMongo['email']}", tempoDeVida)
-        print(f'\nO produto {produtoObjeto["descricao"]} deixou da sua lista de favoritos!\n')
+        for produtoEscolhido in objetoUsuarioRedis['listaFavorito']:
+            if produtoEscolhido["descricao"] == produtoObjeto['descricao']:
+                objetoUsuarioRedis['listaFavorito'].remove(produtoEscolhido)            
+                colecaoUsuario.update_one(usuarioEscolhidoMongo, atualizacaoListaFavorito)
+                jsonUsuarioRedis = json.dumps(objetoUsuarioRedis)
+                tempoDeVida = conexaoRedis.ttl(f"usuario-{usuarioEscolhidoMongo['email']}")
+                conexaoRedis.set(f"usuario-{usuarioEscolhidoMongo['email']}", jsonUsuarioRedis)
+                conexaoRedis.expire(f"usuario-{usuarioEscolhidoMongo['email']}", tempoDeVida)
+                print(f'\nO produto {produtoObjeto["descricao"]} deixou da sua lista de favoritos!\n')
+                break
+            else:
+                print(f"Não existe nenhum produto com essa descrição nos seus favoritos!")

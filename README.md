@@ -1,4 +1,4 @@
-# Atividade MongoDB - Banco de Dados Não Relacional(Entrega 3)
+# Atividade Redis - Banco de Dados Não Relacional(Entrega 3)
 
 ## Informações
 - **Nome:** Matheus Fernando Vieira de Melo

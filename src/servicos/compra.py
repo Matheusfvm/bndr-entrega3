@@ -18,7 +18,7 @@ def criarCompra(conexaoRedis, conexaoMongo, email):
         while key == "S":        
             produtoEscolhido = produto.consultaProduto(conexaoMongo)
             if produtoEscolhido["quantidade"] != 0:
-                quantidadeProdutoCompra = int(input(f"Unidades de produtos compradas(max = {produtoEscolhido["quantidade"]}): "))        
+                quantidadeProdutoCompra = int(input(f"Unidades de produtos compradas(max = {produtoEscolhido['quantidade']}): "))        
                 quantidadeProdutoCompraFinal = produto.diminuirQuantidadeProduto(quantidadeProdutoCompra, produtoEscolhido, conexaoMongo)
                 vendedor.alterarQuantidadeProdutoVendedor(quantidadeProdutoCompraFinal[1], produtoEscolhido, conexaoMongo)
                 produtoObjeto = {
@@ -30,7 +30,7 @@ def criarCompra(conexaoRedis, conexaoMongo, email):
                 listaProduto.append(produtoObjeto)    
                 valorTotalCompra += produtoEscolhido["preco"] * quantidadeProdutoCompraFinal[0]    
             else:
-                print(f"Produto {produtoEscolhido["descricao"]} está em falta!")
+                print(f"Produto {produtoEscolhido['descricao']} está em falta!")
             key = str(input("Deseja comprar um outro produto(S/N)? "))
         dataCompraEntrega = str(input("Data da entrega(dd/mm/AAAA): "))
         listaNomeEmailUsuario = usuario.vinculaCompraUsuarioMongo(listaProduto, dataCompraEntrega, valorTotalCompra, email, conexaoMongo) 
@@ -56,14 +56,12 @@ def listarCompras(usuario):
     indiceCompra = 1
     for compra in listaCompra:
         print(f"\n{indiceCompra}º Compra\n")
-        print(f"Usuário email: {compra["usuario"]["email"]}")
-        print(f"Data e hora da compra: {compra["data_compra"]}")
-        print(f"Data entrega: {compra["data_entrega_compra"]}\n")
-        print(f"Valor total da compra: R${compra["valor_total_compra"]:.2f}")
+        print(f"Data entrega: {compra['data_entrega']}\n")
+        print(f"Valor total da compra: R${compra['valor_total_compra']:.2f}")
         print("\nProdutos\n")
-        for produto in compra["lista_produto"]:
-            print(f"Descrição: {produto["descricao"]}")
-            print(f"Preço: {produto["preco"]:.2f}")
-            print(f"Quantidade: {produto["quantidade_produto_compra"]}")
+        for produto in compra['lista_produto']:
+            print(f"Descrição: {produto['descricao']}")
+            print(f"Preço: {produto['preco']:.2f}")
+            print(f"Quantidade: {produto['quantidade_produto_compra']}")
             print("\n---------------------------------------\n")
     indiceCompra += 1
